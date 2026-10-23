@@ -1,0 +1,86 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6fb">
+  <title>TaskFlow | إدارة المشاريع والمهام</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- القائمة الجانبية للتنقل بين أقسام التطبيق -->
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar" aria-label="القائمة الرئيسية">
+      <a class="brand" href="#dashboard" aria-label="TaskFlow الرئيسية"><span class="brand-mark">T</span><span class="brand-name">TaskFlow</span></a>
+      <p class="side-caption">مساحة العمل</p>
+      <nav class="side-nav">
+        <a class="nav-link active" href="#dashboard"><span aria-hidden="true">▦</span><span class="nav-label">لوحة التحكم</span></a>
+        <a class="nav-link" href="#projects"><span aria-hidden="true">▣</span><span class="nav-label">المشاريع</span></a>
+        <a class="nav-link" href="#tasks"><span aria-hidden="true">☷</span><span class="nav-label">المهام</span></a>
+      </nav>
+      <div class="sidebar-note"><span class="note-dot"></span><div><strong>مساحة منظمة</strong><small>كل مهامك في مكان واحد</small></div></div>
+      <button class="sidebar-collapse" id="sidebarToggle" type="button" aria-label="طي القائمة الجانبية" aria-expanded="true">‹ <span class="nav-label">طي القائمة</span></button>
+    </aside>
+
+    <!-- المحتوى الرئيسي: لوحة التحكم ثم المشاريع والمهام -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="mobile-brand"><button class="icon-btn mobile-menu" id="mobileMenu" type="button" aria-label="فتح القائمة">☰</button><span class="brand-mark">T</span><strong>TaskFlow</strong></div>
+        <div class="breadcrumb">مساحة العمل <span>/</span> <strong>نظرة عامة</strong></div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-pressed="false"><span aria-hidden="true">◐</span><span id="themeLabel">الوضع الداكن</span></button>
+      </header>
+
+      <div id="loadingState" class="loading-state" role="status">جارٍ تحميل مساحة العمل…</div>
+      <div id="appContent" hidden>
+        <section id="dashboard" class="welcome-row">
+          <div><p class="eyebrow">إدارة المشاريع والمهام</p><h1>لوحة التحكم</h1><p class="subtitle">تابعي تقدم مشاريعك ومهامك من نظرة واحدة.</p></div>
+          <button class="btn btn-primary main-add" type="button" data-open-task>＋ <span>مهمة جديدة</span></button>
+        </section>
+
+        <!-- بطاقات الأرقام المختصرة التي يملؤها JavaScript -->
+        <section class="stats-grid" aria-label="ملخص الأداء">
+          <article class="stat-card"><div class="stat-top"><span>إجمالي المشاريع</span><span class="stat-icon violet">▣</span></div><div class="stat-number" id="totalProjects">0</div><small>مشاريع ضمن مساحة العمل</small></article>
+          <article class="stat-card"><div class="stat-top"><span>إجمالي المهام</span><span class="stat-icon blue">☷</span></div><div class="stat-number" id="totalTasks">0</div><small>مهام في جميع المشاريع</small></article>
+          <article class="stat-card"><div class="stat-top"><span>مهام مكتملة</span><span class="stat-icon green">✓</span></div><div class="stat-number" id="completedTasks">0</div><small>تم إنجازها بنجاح</small></article>
+          <article class="stat-card"><div class="stat-top"><span>مهام متأخرة</span><span class="stat-icon coral">◷</span></div><div class="stat-number" id="overdueTasks">0</div><small>تحتاج إلى متابعة</small></article>
+        </section>
+
+        <!-- ملخص الإنجاز والرسم البياني -->
+        <section class="dashboard-grid">
+          <article class="panel progress-panel"><div class="panel-heading"><div><h2>نسبة الإنجاز</h2><p>تقدم المهام في جميع المشاريع</p></div><span class="period-chip">كل المهام</span></div><div class="progress-summary"><strong id="completionRate">0%</strong><span>من المهام مكتملة</span></div><div class="progress track"><div class="progress-bar" id="completionBar" role="progressbar" aria-label="نسبة إنجاز المهام" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div><div class="progress-foot"><span id="completionCount">0 من 0 مهام</span><span class="positive">● يتحدث تلقائيًا</span></div></article>
+          <article class="panel chart-panel"><div class="panel-heading"><div><h2>حالة المهام</h2><p>توزيع المهام حسب حالتها</p></div><span class="chart-symbol">◔</span></div><div class="chart-wrap"><canvas id="taskStatusChart" role="img" aria-label="رسم يوضح عدد المهام حسب الحالة">رسم يوضح عدد المهام حسب الحالة</canvas><div id="chartFallback" class="chart-fallback" hidden></div></div></article>
+        </section>
+
+        <!-- بطاقات المشاريع التي ينشئها JavaScript -->
+        <section id="projects" class="panel projects-panel"><div class="section-heading"><div><p class="eyebrow">نظرة عامة</p><h2>مشاريعك</h2><p>تابعي فرق العمل والإنجاز في كل مشروع.</p></div><button class="btn btn-outline-primary" type="button" data-open-project>＋ إضافة مشروع</button></div><div id="projectsList" class="project-grid"></div></section>
+
+        <!-- قسم المهام: البحث والتصفية والفرز وقائمة البطاقات -->
+        <section id="tasks" class="panel tasks-panel"><div class="section-heading task-heading"><div><p class="eyebrow">قائمة العمل</p><h2>المهام</h2><p>ابحثي ورتبي المهام حسب احتياجك.</p></div><button class="btn btn-primary" type="button" data-open-task>＋ إضافة مهمة</button></div>
+          <div class="task-filters"><label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="ابحثي عن مهمة أو مشروع…" aria-label="البحث عن مهمة أو مشروع"></label>
+            <select id="statusFilter" class="form-select" aria-label="تصفية حسب الحالة"><option value="">كل الحالات</option><option value="pending">قيد الانتظار</option><option value="in-progress">قيد التنفيذ</option><option value="completed">مكتملة</option></select>
+            <select id="priorityFilter" class="form-select" aria-label="تصفية حسب الأولوية"><option value="">كل الأولويات</option><option value="high">عالية</option><option value="medium">متوسطة</option><option value="low">منخفضة</option></select>
+            <select id="sortFilter" class="form-select" aria-label="ترتيب المهام"><option value="date-asc">الأقرب استحقاقًا</option><option value="date-desc">الأبعد استحقاقًا</option><option value="progress">التقدم: المكتمل أولًا</option><option value="priority">الأولوية: الأعلى أولًا</option></select>
+          </div>
+          <div class="drop-lanes" aria-label="اسحبي المهمة إلى الحالة المطلوبة"><span>اسحبي المهمة إلى:</span><div data-drop-status="pending" class="drop-lane pending-lane">قيد الانتظار</div><div data-drop-status="in-progress" class="drop-lane progress-lane">قيد التنفيذ</div><div data-drop-status="completed" class="drop-lane completed-lane">مكتملة</div></div>
+          <p id="taskCount" class="result-count" aria-live="polite"></p><div id="tasksList" class="task-list"></div>
+        </section>
+        <footer class="page-footer">TaskFlow <span>•</span> مساحة عملك لإنجاز أفضل</footer>
+      </div>
+    </main>
+  </div>
+
+  <!-- نافذة إضافة المشروع وتعديله -->
+  <dialog class="form-dialog" id="projectDialog" aria-labelledby="projectDialogTitle"><form id="projectForm" novalidate><div class="dialog-heading"><div><p class="eyebrow">إدارة المشاريع</p><h2 id="projectDialogTitle">إضافة مشروع</h2></div><button class="icon-btn" type="button" data-close-dialog aria-label="إغلاق">×</button></div><input type="hidden" id="projectId"><label class="field-label" for="projectName">اسم المشروع <span>*</span></label><input class="form-control" id="projectName" required maxlength="100" placeholder="مثال: تطوير الموقع"><label class="field-label" for="projectDescription">وصف مختصر</label><textarea class="form-control" id="projectDescription" rows="3" maxlength="500" placeholder="ما الهدف من هذا المشروع؟"></textarea><p class="form-error" id="projectError" role="alert"></p><div class="dialog-actions"><button class="btn btn-primary" type="submit">حفظ المشروع</button><button class="btn btn-light" type="button" data-close-dialog>إلغاء</button></div></form></dialog>
+
+  <!-- نافذة إضافة المهمة وتعديلها -->
+  <dialog class="form-dialog" id="taskDialog" aria-labelledby="taskDialogTitle"><form id="taskForm" novalidate><div class="dialog-heading"><div><p class="eyebrow">إدارة المهام</p><h2 id="taskDialogTitle">إضافة مهمة</h2></div><button class="icon-btn" type="button" data-close-dialog aria-label="إغلاق">×</button></div><input type="hidden" id="taskId"><label class="field-label" for="taskTitle">اسم المهمة <span>*</span></label><input class="form-control" id="taskTitle" required maxlength="150" placeholder="مثال: مراجعة تصميم الصفحة"><div class="form-row"><div><label class="field-label" for="taskProject">المشروع <span>*</span></label><select class="form-select" id="taskProject" required></select></div><div><label class="field-label" for="taskStatus">الحالة</label><select class="form-select" id="taskStatus"><option value="pending">قيد الانتظار</option><option value="in-progress">قيد التنفيذ</option><option value="completed">مكتملة</option></select></div></div><div class="form-row"><div><label class="field-label" for="taskPriority">الأولوية</label><select class="form-select" id="taskPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option></select></div><div><label class="field-label" for="taskDueDate">تاريخ الاستحقاق</label><input class="form-control" id="taskDueDate" type="date"></div></div><p class="form-error" id="taskError" role="alert"></p><div class="dialog-actions"><button class="btn btn-primary" type="submit">حفظ المهمة</button><button class="btn btn-light" type="button" data-close-dialog>إلغاء</button></div></form></dialog>
+
+  <!-- مساحة رسائل النجاح أو الخطأ -->
+  <div class="toast-message" id="toast" role="status" aria-live="polite"></div>
+  <!-- تحميل مكتبة المخطط ثم منطق التطبيق -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/script.js" defer></script>
+</body>
+</html>
+
